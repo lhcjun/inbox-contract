@@ -19,7 +19,7 @@ beforeEach(async () => {
 });
 
 describe('Inbox', () => {
-  it('deploys a contract', () => {
-    console.log(inbox);
+  it('deploys a contract in beforeEach', () => {
+    assert.ok(inbox.options.address);
   });
 });
