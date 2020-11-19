@@ -16,7 +16,7 @@ beforeEach(async () => {
   // use one of those accounts to deploy the contract (need abi & bytecode to create a contract)
   inbox = await new web3.eth.Contract(abi) // interact with existed contract / deploy new contract
     .deploy({ data: '0x' + evm.bytecode.object, arguments: [initialMsg] })
-    .send({ from: accounts[0], gas: '1000000' }); // send transaction
+    .send({ from: accounts[0], gas: '1000000' }); // send transaction (gas limit)
 });
 
 describe('Inbox', () => {
@@ -26,7 +26,16 @@ describe('Inbox', () => {
 
   it('sends a default msg to the new instance of constructor when deploying the contract', async () => {
     // get message variable from the deployed contract
-    const msg = await inbox.methods.message().call(); // invoke the contract function by 'call'
+    const msg = await inbox.methods.message().call(); // invoke the contract function by 'call' (read data)
     assert.equal(msg, initialMsg);
+  });
+
+  it('can modify message variable with setMessage', async () => {
+    // invoke the contract function by 'sending a transaction' to contract instance (modify data)
+    const newMsg = 'bye';
+    await inbox.methods.setMessage(newMsg).send({ from: accounts[0] }); // return transaction hash, not value
+
+    const msg = await inbox.methods.message().call();
+    assert.equal(msg, newMsg);
   });
 });
